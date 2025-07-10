@@ -4,7 +4,7 @@ Upload a research paper PDF and get section-wise reviews (Clarity, Novelty, Sugg
 
 This is a personal project built with Streamlit and LLM APIs (Groq) to help researchers, reviewers, and students quickly evaluate the quality of academic papers.
 
-## 🚀 Features
+## Features
 
 - Upload any research paper as PDF
 - Extract and review key sections:
@@ -18,14 +18,14 @@ This is a personal project built with Streamlit and LLM APIs (Groq) to help rese
 - Actionable suggestions per section
 - One-click download of full review as `.txt`
 
-## 🧰 Tech Stack
+## Tech Stack
 
 - Python
 - Streamlit (frontend)
-- OpenAI / Groq / Gemini (LLMs for review)
+- Groq (LLM for review)
 - PyPDF2 (PDF parsing)
 
-## 🔧 Local Setup
+## Local Setup
 
 1. Clone this repo:
    git clone https://github.com/yourusername/paper-reviewer-bot.git
@@ -48,18 +48,18 @@ This is a personal project built with Streamlit and LLM APIs (Groq) to help rese
    streamlit run app.py
 
 
-## 📄 Sample Output
+## Sample Output
 
 "Clarity: 8/10. The abstract is well-structured and clearly conveys the novelty of the research..."
 
-## 🙋‍♂️ Why This?
+## Purpose
 
 Academic paper reviewing is time-consuming. This tool automates initial quality checks to:
 - Save researchers time
 - Speed up literature filtering
 - Improve early drafts with feedback
 
-## 📬 Contact
+## Contact
 
-Made with 💡 by Abel Abraham  
+Made with ❤️ by Abel Abraham  
 https://github.com/AbelAbraham77

@@ -1,41 +1,57 @@
 import streamlit as st
-import requests
+import PyPDF2
+from reviewer_engine import review_section
 
-st.set_page_config(page_title="AI Paper Reviewer", layout="wide")
+st.set_page_config(page_title="Paper Reviewer Bot", layout="centered")
 
-st.title("📄 AI-Powered Research Paper Reviewer")
-st.markdown("Upload a research paper (PDF) and get instant section-wise reviews using LLMs.")
+st.title("📄 AI-Powered Paper Reviewer")
 
-uploaded_file = st.file_uploader("Upload PDF", type="pdf")
+st.markdown("""
+Upload a research paper PDF and get a detailed academic-style review of each section.
+""")
+
+uploaded_file = st.file_uploader("Upload your research paper (PDF)", type="pdf")
 
 if uploaded_file:
-    with st.spinner("Uploading and reviewing..."):
-        response = requests.post(
-            "http://localhost:8000/review/",
-            files={"file": (uploaded_file.name, uploaded_file, "application/pdf")}
-        )
+    st.success("✅ PDF uploaded successfully.")
 
-        if response.status_code != 200:
-            st.error("❌ Failed to get response from backend.")
-        else:
-            reviews = response.json()
+    # Read text from PDF
+    pdf_reader = PyPDF2.PdfReader(uploaded_file)
+    raw_text = ""
+    for page in pdf_reader.pages:
+        raw_text += page.extract_text() or ""
 
-            if "error" in reviews:
-                st.error(reviews["error"])
-            else:
-                # Display each section review
-                for section, review in reviews.items():
-                    st.subheader(f"{section} Review")
-                    st.markdown(review)
+    # Split text into sections (simple heuristic)
+    section_headers = ["abstract", "introduction", "method", "results", "discussion", "conclusion"]
+    sections = {}
+    current_section = "abstract"
+    sections[current_section] = ""
 
-                # 📝 Combine all reviews and allow download
-                full_review_text = "\n\n".join(
-                    f"{section} Review:\n{content}" for section, content in reviews.items()
-                )
+    for line in raw_text.split("\n"):
+        lower_line = line.lower().strip()
+        if any(header in lower_line for header in section_headers):
+            for header in section_headers:
+                if header in lower_line:
+                    current_section = header
+                    sections[current_section] = ""
+                    break
+        sections[current_section] += line + "\n"
 
-                st.download_button(
-                    label="💾 Download Full Review",
-                    data=full_review_text,
-                    file_name="paper_review.txt",
-                    mime="text/plain"
-                )
+    st.markdown("### 🧠 Review Results")
+    review_output = ""
+    for section, content in sections.items():
+        if content.strip():
+            st.markdown(f"#### 📌 {section.capitalize()}")
+            with st.spinner(f"Reviewing {section}..."):
+                review = review_section(content, section)
+                st.write(review)
+                review_output += f"{section.capitalize()} Review\n{review}\n\n"
+
+    # Downloadable review
+    st.markdown("### 📥 Download Full Review")
+    st.download_button(
+        label="Download Review as TXT",
+        data=review_output,
+        file_name="paper_review.txt",
+        mime="text/plain"
+    )

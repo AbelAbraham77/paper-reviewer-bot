@@ -1,12 +1,8 @@
-import os
-from dotenv import load_dotenv
 import openai
+import streamlit as st
 
-# Load environment variables
-load_dotenv()
-
-# Set up Groq API access (compatible with OpenAI's SDK format)
-openai.api_key = os.getenv("GROQ_API_KEY")
+# Use Streamlit's secrets
+openai.api_key = st.secrets["GROQ_API_KEY"]
 openai.api_base = "https://api.groq.com/openai/v1"
 
 def review_section(text, section_name):
@@ -25,7 +21,7 @@ Return the following:
 
     try:
         response = openai.ChatCompletion.create(
-            model="llama3-8b-8192",  # You can also try "llama3-70b-8192"
+            model="llama3-8b-8192",
             messages=[{"role": "user", "content": prompt}]
         )
         return response["choices"][0]["message"]["content"]
